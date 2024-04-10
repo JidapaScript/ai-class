@@ -16,7 +16,9 @@ export default function Home() {
       age: age,
       topic: topic
     })
-    console.log(response)
+    console.log(response.data)
+
+    return <div>{response.data.answer}</div>;
     
   }
 
