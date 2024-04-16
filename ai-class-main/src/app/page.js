@@ -1,33 +1,50 @@
-"use client"
+"use client";
 import axios from "axios";
-
+import { useState } from "react";
 
 export default function Home() {
 
+  const [answer, setAnswer] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+
+
+
   async function note(event) {
     event.preventDefault();
-    
+    setIsLoading(true);
+
+
     const name = event.target.name.value;
-    const age = event.target.age.value;
-    const topic = event.target.topic.value;
+    const animal = event.target.animal.value;
+    const personality = event.target.personality.value;
 
-    const response = await axios.post("api/create-story", {
-      name: name,
-      age: age,
-      topic: topic
+    const response = await axios.post("/api/create-image", {
+      name,
+      animal,
+      personality
     })
-    console.log(response.data)
+    // console.log(response.data.answer)
+    setAnswer(response.data.answer)
+    setIsLoading(false);
 
-    return <div>{response.data.answer}</div>;
-    
   }
 
   return (
-    <form onSubmit={note} className="flex flex-col">
-      <input className="border-slate-500" type="text" name="name" placeholder="what's your name?" />
-      <input className="border-slate-500" type="number" name="age" placeholder="how old are you?" />
-      <input className="border-slate-500" type="text" name="topic" placeholder="what's it about?" />
-      <button type="submit">Send</button>
-    </form>
+    <div>
+      <form onSubmit={note} className="flex flex-col">
+
+        <input className="border-slate-500" type="text" name="name" placeholder="What's your name?" />
+
+        <input className="border-slate-500" type="text" name="animal" placeholder="What's your spirit animal?" />
+
+        <input className="border-slate-500" type="text" maxLength="25" name="personality" placeholder="How would your friend describe you?" />
+
+        <button type="submit" disabled={isLoading}>{isLoading ? 'Loading' : 'Submit'}</button>
+
+      </form>
+      <p className="p-4">{isLoading ? 'Loading...' : ''}</p>
+      <p className="p-4">{answer}</p>
+      { answer && <img src={answer} className="w-full" />}
+    </div>
   );
 }
